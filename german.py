@@ -6,6 +6,7 @@ import requests
 from requests.exceptions import RequestException
 from argparse import ArgumentParser
 import tarfile
+from json import dump
 
 SOURCE = "https://pcai056.informatik.uni-leipzig.de"
 wiki_1M_url = f"{SOURCE}/downloads/corpora/deu_wikipedia_2021_1M.tar.gz"
@@ -146,6 +147,20 @@ def filter_words(words: dict) -> list:
     return sorted_list
 
 
+def write_json_file(words: list, count: int, name: str):
+    json_dict = {
+        "name": name,
+        "_comment": ("Sourced from: "
+                     "https://wortschatz.uni-leipzig.de/de/download/German"),
+        "leftToRight": True,
+        "bcp47": "de-DE",
+        "words": words[:count],
+    }
+
+    with open(f"{name}.json", "w") as f:
+        dump(json_dict, f, indent=2, ensure_ascii=False)
+
+
 def main(args):
     archive_name = FILE_NAME_PATTERN.format(
         type=args.type,
@@ -168,6 +183,10 @@ def main(args):
     words = filter_words(words)
 
     # TODO: write files in correct format
+    write_json_file(words, 200, "german")
+    write_json_file(words, 1_000, "german_1k")
+    write_json_file(words, 10_000, "german_10k")
+    write_json_file(words, 250_000, "german_250k")
 
 
 if __name__ == "__main__":
