@@ -119,7 +119,7 @@ def filter_words(words: dict) -> list:
             or len(word) == 1                       # one letter word
             or word in NON_GERMAN_WORDS             # non german words
             or re.search(ABBREVIATION_REGEX, word)  # abbreviations
-            or frequency == 1                       # one time occurences
+            #or frequency == 1                       # one time occurences
         ):
             continue
 
