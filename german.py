@@ -95,7 +95,7 @@ def words_from_file_in_archive(file_name: str, archive_name: str) -> dict:
     return words
 
 
-def filter_words(words: dict) -> list:
+def filter_words(words: dict, verbose: bool) -> list:
     """Sanatize words dict in multiple ways and return list ordered by frquency
 
     - Remove everything not a german latter
@@ -119,7 +119,7 @@ def filter_words(words: dict) -> list:
             or len(word) == 1                       # one letter word
             or word in NON_GERMAN_WORDS             # non german words
             or re.search(ABBREVIATION_REGEX, word)  # abbreviations
-            #or frequency == 1                       # one time occurences
+            # or frequency == 1                       # one time occurences
         ):
             continue
 
@@ -130,12 +130,12 @@ def filter_words(words: dict) -> list:
 
         filtered_words[word] += frequency
 
-    # TODO: implement verbose
-    print(
-        "Removed",
-        len(words)-len(filtered_words),
-        (len(words)-len(filtered_words))/len(words),
-    )
+    if verbose:
+        print(
+            "Removed",
+            len(words)-len(filtered_words),
+            (len(words)-len(filtered_words))/len(words),
+        )
 
     sorted_list = [
         word
@@ -180,7 +180,7 @@ def main(args):
         archive_name
     )
 
-    words = filter_words(words)
+    words = filter_words(words, args.verbose)
 
     # TODO: write files in correct format
     write_json_file(words, 200, "german")
@@ -209,6 +209,10 @@ if __name__ == "__main__":
         nargs="?",
         choices=["2021"],
         default="2021")
+    parser.add_argument(
+        "--verbose", "-v",
+        action="count",
+        default=0)
     args = parser.parse_args()
 
     main(args)
