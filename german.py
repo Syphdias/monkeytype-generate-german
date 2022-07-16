@@ -39,9 +39,9 @@ LOWERCASE_WORDS = [
     "Und", "Unter", "Ursprünglich", "Viele", "Vom", "Von", "Vor", "Vorher",
     "Wann", "Was", "Weder", "Wegen", "Weil", "Weitere", "Welche", "Welchem",
     "Welchen", "Welcher", "Welches", "Wem", "Wen", "Wenn", "Wenngleich",
-    "Wennschon", "Wer", "Wessen", "Wie", "Wieweit", "Wiewohl", "Wo", "Wofern",
-    "Wohingegen", "Während", "Währenddem", "Währenddessen", "Zu", "Zudem",
-    "Zum", "Zumal", "Zur", "Zuvor", "Zwar", "Zwischen",
+    "Wennschon", "Wer", "Wessen", "Wie", "Wieweit", "Wiewohl", "Wir", "Wo",
+    "Wofern", "Wohingegen", "Während", "Währenddem", "Währenddessen", "Zu",
+    "Zudem", "Zum", "Zumal", "Zur", "Zuvor", "Zwar", "Zwischen",
     # specials (opinionated)
     # "Aus",    # could be a nomen
     "Ihnen",    # could be capital
@@ -60,6 +60,11 @@ LOWERCASE_WORDS = [
 NON_GERMAN_WORDS = [
     "AfD", "CDs", "MHz", "New", "StGB", "The", "UdSSR" "de", "La", "San",
     "School",
+]
+
+UNWANTED_WORDS = [
+    "Arsch", "Arschloch", "Arschlöcher", "Drecksau", "Fick", "Ficker", "Hure",
+    "Huren", "Hurensohn", "Neger", "Schlampe", "ficke", "gefickt",
 ]
 
 
@@ -118,6 +123,7 @@ def filter_words(words: dict, verbose: bool) -> list:
             re.search(german_characters, word)      # non german letter
             or len(word) == 1                       # one letter word
             or word in NON_GERMAN_WORDS             # non german words
+            or word in UNWANTED_WORDS               # unwanted words
             or re.search(ABBREVIATION_REGEX, word)  # abbreviations
             # or frequency == 1                       # one time occurences
         ):
