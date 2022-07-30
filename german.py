@@ -7,65 +7,15 @@ from requests.exceptions import RequestException
 from argparse import ArgumentParser
 import tarfile
 from json import dump
+from lowercase_words import LOWERCASE_WORDS
+from non_german_words import NON_GERMAN_WORDS
+from unwanted_words import UNWANTED_WORDS
 
 SOURCE = "https://pcai056.informatik.uni-leipzig.de"
 wiki_1M_url = f"{SOURCE}/downloads/corpora/deu_wikipedia_2021_1M.tar.gz"
 news_1M_url = f"{SOURCE}/downloads/corpora/deu_news_2021_1M.tar.gz"
 FILE_NAME_PATTERN = "deu_{type}_{year}_{amount}.tar.gz"
 URL_PATTERN = f"{SOURCE}/downloads/corpora/{{file_name}}"
-
-LOWERCASE_WORDS = [
-    "Ab", "Aber", "Alle", "Allein", "Allerdings", "Als", "Also", "Am", "An",
-    "Andererseits", "Anschließend", "Ansonst", "Ansonsten", "Anstatt", "Auch",
-    "Auf", "Aufgrund", "Ausgenommen", "Außer", "Außerdem", "Bei", "Beim",
-    "Bereits", "Bevor", "Beziehungsweise", "Bis", "Bloß", "Da", "Dabei",
-    "Dadurch", "Dafür", "Dagegen", "Daher", "Damit", "Danach", "Daneben",
-    "Dann", "Darauf", "Darum", "Darüber", "Das", "Dass", "Davor", "Dazu",
-    "Dem", "Den", "Denen", "Denn", "Dennoch", "Der", "Deren", "Derer", "Des",
-    "Deshalb", "Dessen", "Desto", "Deswegen", "Die", "Dies", "Diese", "Diesem",
-    "Diesen", "Dieser", "Dieses", "Doch", "Dort", "Durch", "Ebenso", "Ein",
-    "Eine", "Einem", "Einen", "Einer", "Einerseits", "Eines", "Einige",
-    "Entweder", "Er", "Erst", "Es", "Falls", "Ferner", "Folglich", "Für",
-    "Genauso", "Geschweige", "Gleichwie", "Heute", "Hier", "Ich", "Ihm", "Ihn",
-    "Im", "Immerhin", "In", "Indem", "Indes", "Indessen", "Insgesamt",
-    "Insofern", "Insoweit", "Inzwischen", "Je", "Jedennoch", "Jedoch", "Jene",
-    "Jenem", "Jenen", "Jener", "Jenes", "Kaum", "Man", "Minus", "Mit", "Nach",
-    "Nachdem", "Neben", "Nicht", "Noch", "Nun", "Nur", "Nämlich", "Ob",
-    "Obgleich", "Obschon", "Obwohl", "Obzwar", "Oder", "Ohne", "Plus",
-    "Respektive", "Schließlich", "Schon", "Sein", "Seine", "Seit", "Seitdem",
-    "Selbst", "So", "Sobald", "Sodass", "Sofern", "Sogar", "Solange", "Somit",
-    "Sondern", "Sonst", "Sooft", "Sosehr", "Soviel", "Soweit", "Sowenig",
-    "Sowie", "Sowohl", "Später", "Statt", "Trotz", "Trotzdem", "Um", "Umso",
-    "Und", "Unter", "Ursprünglich", "Viele", "Vom", "Von", "Vor", "Vorher",
-    "Wann", "Was", "Weder", "Wegen", "Weil", "Weitere", "Welche", "Welchem",
-    "Welchen", "Welcher", "Welches", "Wem", "Wen", "Wenn", "Wenngleich",
-    "Wennschon", "Wer", "Wessen", "Wie", "Wieweit", "Wiewohl", "Wir", "Wo",
-    "Wofern", "Wohingegen", "Während", "Währenddem", "Währenddessen", "Zu",
-    "Zudem", "Zum", "Zumal", "Zur", "Zuvor", "Zwar", "Zwischen",
-    # specials (opinionated)
-    # "Aus",    # could be a nomen
-    "Ihnen",    # could be capital
-    "Ihr",      # could be capital
-    "Ihre",     # could be capital
-    "Ihrem",    # could be capital
-    "Ihren",    # could be capital
-    "Ihrer",    # could be capital
-    "Ihres",    # could be capital
-    "Sie",      # could be capital
-]
-
-# The following "non-german" words are quite opinionated
-# These can be abbreviations (e.g. CDs), political parties, numerals or just
-# not german at all.
-NON_GERMAN_WORDS = [
-    "AfD", "CDs", "MHz", "New", "StGB", "The", "UdSSR" "de", "La", "San",
-    "School",
-]
-
-UNWANTED_WORDS = [
-    "Arsch", "Arschloch", "Arschlöcher", "Drecksau", "Fick", "Ficker", "Hure",
-    "Huren", "Hurensohn", "Neger", "Schlampe", "ficke", "gefickt",
-]
 
 
 def download_file(url: str, file_name: str) -> None:
