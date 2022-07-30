@@ -9,6 +9,8 @@ import tarfile
 from json import dump
 from lowercase_words import LOWERCASE_WORDS
 from non_german_words import NON_GERMAN_WORDS
+from company_trademark_names import COMPANY_TRADEMARK_NAMES
+from people_names import PEOPLE_NAMES
 from unwanted_words import UNWANTED_WORDS
 
 SOURCE = "https://pcai056.informatik.uni-leipzig.de"
@@ -57,24 +59,33 @@ def filter_words(words: dict, verbose: bool) -> list:
       (exclamation points, kommas, foreign characters)
     - Remove one letter words, like "m" (wtf?)
     - Remove non german words
+    - Remove company and tradmark names
+    - Remove names of people
     - Remove abbreviations (words with only capital letters)
-    - Remove words that only appeared once in the source material
+    - Remove words with at least 1 capital letter in the middle
+    - Remove unwanted words like insults
+    - NOT: Remove words that only appeared once in the source material
+      This is commented out due to lack of words for 250k
     - Fix capitalisation, since some words are only uppercase because of their
       position at the start of a sentence
     """
     filtered_words = defaultdict(int)
 
-    german_characters = re.compile("[^a-zA-ZäöüÄÖÜßẞ]")
+    NON_GERMAN_LETTERS = re.compile("[^a-zA-ZäöüÄÖÜßẞ]")
     ABBREVIATION_REGEX = re.compile("^[A-ZÄÖÜẞ]+$")
+    CAPITAL_LETTER_IN_MIDDLE_REGEX = re.compile("^.+[A-ZÄÖÜẞ]")
     for word, frequency in words.items():
         # skip words with invalid "characters" like:
         # special characters or characters from another language
         if (
-            re.search(german_characters, word)  # non german letter
+            re.search(NON_GERMAN_LETTERS, word)
             or len(word) == 1  # one letter word
             or word in NON_GERMAN_WORDS
-            or word in UNWANTED_WORDS
+            or word in COMPANY_TRADEMARK_NAMES
+            or word in PEOPLE_NAMES
             or re.search(ABBREVIATION_REGEX, word)
+            or re.search(CAPITAL_LETTER_IN_MIDDLE_REGEX, word)
+            or word in UNWANTED_WORDS
             # or frequency == 1                       # one time occurences
         ):
             continue
@@ -142,6 +153,7 @@ def main(args):
     write_json_file(words, source_file, 1_000, "german_1k")
     write_json_file(words, source_file, 10_000, "german_10k")
     write_json_file(words, source_file, 250_000, "german_250k")
+    write_json_file(words, source_file, len(words), "german_max")
 
 
 if __name__ == "__main__":
