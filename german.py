@@ -70,11 +70,11 @@ def filter_words(words: dict, verbose: bool) -> list:
         # skip words with invalid "characters" like:
         # special characters or characters from another language
         if (
-            re.search(german_characters, word)      # non german letter
-            or len(word) == 1                       # one letter word
-            or word in NON_GERMAN_WORDS             # non german words
-            or word in UNWANTED_WORDS               # unwanted words
-            or re.search(ABBREVIATION_REGEX, word)  # abbreviations
+            re.search(german_characters, word)  # non german letter
+            or len(word) == 1  # one letter word
+            or word in NON_GERMAN_WORDS
+            or word in UNWANTED_WORDS
+            or re.search(ABBREVIATION_REGEX, word)
             # or frequency == 1                       # one time occurences
         ):
             continue
@@ -89,15 +89,13 @@ def filter_words(words: dict, verbose: bool) -> list:
     if verbose:
         print(
             "Removed",
-            len(words)-len(filtered_words),
-            (len(words)-len(filtered_words))/len(words),
+            len(words) - len(filtered_words),
+            (len(words) - len(filtered_words)) / len(words),
         )
 
     sorted_list = [
         word
-        for word, _ in sorted(filtered_words.items(),
-                              key=lambda x: x[1],
-                              reverse=True)
+        for word, _ in sorted(filtered_words.items(), key=lambda x: x[1], reverse=True)
     ]
 
     return sorted_list
@@ -122,9 +120,8 @@ def write_json_file(words: list, source_file_name: str, count: int, name: str):
 
 def main(args):
     archive_name = FILE_NAME_PATTERN.format(
-        type=args.type,
-        amount=args.amount,
-        year=args.year)
+        type=args.type, amount=args.amount, year=args.year
+    )
     url = URL_PATTERN.format(file_name=archive_name)
 
     if not exists(archive_name) or not tarfile.is_tarfile(archive_name):
@@ -135,11 +132,9 @@ def main(args):
 
     source_file = (
         f"deu_{args.type}_{args.year}_{args.amount}/"
-        f"deu_{args.type}_{args.year}_{args.amount}-words.txt")
-    words = words_from_file_in_archive(
-        source_file,
-        archive_name
+        f"deu_{args.type}_{args.year}_{args.amount}-words.txt"
     )
+    words = words_from_file_in_archive(source_file, archive_name)
 
     words = filter_words(words, args.verbose)
 
@@ -153,26 +148,26 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
         "type",
-        choices=["wikipedia", "news"])
-    parser.add_argument(
-        "amount",
-        choices=["10k", "30k", "100k", "300K", "1M"],
-        nargs="?",
-        default="1M")
+        choices=["wikipedia", "news"],
+    )
     parser.add_argument(
         "amount",
         nargs="?",
         choices=["10k", "30k", "100k", "300K", "1M"],
-        default="1M")
+        default="1M",
+    )
     parser.add_argument(
         "year",
         nargs="?",
         choices=["2021"],
-        default="2021")
+        default="2021",
+    )
     parser.add_argument(
-        "--verbose", "-v",
+        "--verbose",
+        "-v",
         action="count",
-        default=0)
+        default=0,
+    )
     args = parser.parse_args()
 
     main(args)
