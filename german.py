@@ -163,7 +163,7 @@ def write_json_file(words: list, source_file_name: str, count: int, name: str):
         ),
         "leftToRight": True,
         "bcp47": "de-DE",
-        "words": words[:count],
+        "words": sorted(words[:count]),
     }
 
     with open(f"{name}.json", "w") as f:
