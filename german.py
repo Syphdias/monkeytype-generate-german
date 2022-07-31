@@ -16,7 +16,7 @@ from unwanted_words import UNWANTED_WORDS
 SOURCE = "https://pcai056.informatik.uni-leipzig.de"
 wiki_1M_url = f"{SOURCE}/downloads/corpora/deu_wikipedia_2021_1M.tar.gz"
 news_1M_url = f"{SOURCE}/downloads/corpora/deu_news_2021_1M.tar.gz"
-FILE_NAME_PATTERN = "deu_{type}_{year}_{amount}.tar.gz"
+FILE_NAME_PATTERN = "deu_{source}.tar.gz"
 URL_PATTERN = f"{SOURCE}/downloads/corpora/{{file_name}}"
 
 
@@ -32,7 +32,9 @@ def download_file(url: str, file_name: str) -> None:
         f.write(r.raw.read())
 
 
-def words_from_file_in_archive(file_name: str, archive_name: str) -> dict:
+def words_from_file_in_archive(
+    file_name: str, archive_name: str, words: dict = None
+) -> dict:
     """Extract words file from archive and return it as dict
 
     The word will be the key, the value will be the frequency
@@ -41,7 +43,9 @@ def words_from_file_in_archive(file_name: str, archive_name: str) -> dict:
     rank<tab>word<tab>word frequency<newline>
     1	der	499367
     """
-    words = defaultdict(int)
+    if not words:
+        words = defaultdict(int)
+
     with tarfile.open(archive_name, mode="r:gz") as tar:
         words_file = tar.extractfile(file_name)
 
@@ -130,22 +134,24 @@ def write_json_file(words: list, source_file_name: str, count: int, name: str):
 
 
 def main(args):
-    archive_name = FILE_NAME_PATTERN.format(
-        type=args.type, amount=args.amount, year=args.year
-    )
-    url = URL_PATTERN.format(file_name=archive_name)
+    # get one list for sources
+    if args.type and args.year and args.amount:
+        args.sources.append(f"{args.type}_{args.year}_{args.amount}")
 
-    if not exists(archive_name) or not tarfile.is_tarfile(archive_name):
-        download_file(url, archive_name)
+    words = defaultdict(int)
 
-    # read directly from requests?
-    # tar = tarfile.open(fileobj=r.raw, mode="r:gz")
+    for source in args.sources:
+        archive_name = FILE_NAME_PATTERN.format(source=source)
+        url = URL_PATTERN.format(file_name=archive_name)
 
-    source_file = (
-        f"deu_{args.type}_{args.year}_{args.amount}/"
-        f"deu_{args.type}_{args.year}_{args.amount}-words.txt"
-    )
-    words = words_from_file_in_archive(source_file, archive_name)
+        if not exists(archive_name) or not tarfile.is_tarfile(archive_name):
+            download_file(url, archive_name)
+
+        # read directly from requests?
+        # tar = tarfile.open(fileobj=r.raw, mode="r:gz")
+
+        source_file = f"deu_{source}/" f"deu_{source}-words.txt"
+        words = words_from_file_in_archive(source_file, archive_name, words)
 
     words = filter_words(words, args.verbose)
 
@@ -159,20 +165,22 @@ def main(args):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
-        "type",
+        "sources",
+        nargs="*",
+        help='Provide sources in the form of {type}_{year}_{amount}, e.g. "wikipedia_2021_1M". '
+        "You can provide multiple sources.",
+    )
+    parser.add_argument(
+        "--type",
         choices=["wikipedia", "news", "mixed-typical"],
     )
     parser.add_argument(
-        "amount",
-        nargs="?",
+        "--amount",
         choices=["10k", "30k", "100k", "300K", "1M"],
-        default="1M",
     )
     # TODO: Add option for "latest" and just try last year, then -1, etc.
     parser.add_argument(
-        "year",
-        nargs="?",
-        default="2021",
+        "--year",
     )
     parser.add_argument(
         "--verbose",
@@ -181,5 +189,10 @@ if __name__ == "__main__":
         default=0,
     )
     args = parser.parse_args()
+
+    # Check for valid input
+    if not args.sources and not (args.type and args.year and args.amount):
+        print("Please provide either: (--type, --year, --amount) or SOURCE")
+        exit(1)
 
     main(args)
