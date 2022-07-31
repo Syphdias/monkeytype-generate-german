@@ -79,14 +79,14 @@ def filter_words(words: dict, verbose: bool) -> list:
         # special characters or characters from another language
         if (
             re.search(NON_GERMAN_LETTERS, word)
-            or len(word) == 1  # one letter word
+            or len(word) <= 1  # one and none letter word
             or word in NON_GERMAN_WORDS
             or word in COMPANY_TRADEMARK_NAMES
             or word in PEOPLE_NAMES
             or re.search(ABBREVIATION_REGEX, word)
             or re.search(CAPITAL_LETTER_IN_MIDDLE_REGEX, word)
             or word in UNWANTED_WORDS
-            # or frequency == 1                       # one time occurences
+            # or frequency == 1  # one time occurences
         ):
             continue
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
         "type",
-        choices=["wikipedia", "news"],
+        choices=["wikipedia", "news", "mixed-typical"],
     )
     parser.add_argument(
         "amount",
@@ -168,10 +168,10 @@ if __name__ == "__main__":
         choices=["10k", "30k", "100k", "300K", "1M"],
         default="1M",
     )
+    # TODO: Add option for "latest" and just try last year, then -1, etc.
     parser.add_argument(
         "year",
         nargs="?",
-        choices=["2021"],
         default="2021",
     )
     parser.add_argument(
