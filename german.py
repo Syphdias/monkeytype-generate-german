@@ -131,6 +131,7 @@ def write_json_file(words: list, source_file_name: str, count: int, name: str):
 
     with open(f"{name}.json", "w") as f:
         dump(json_dict, f, indent=2, ensure_ascii=False)
+        f.write("\n")
 
 
 def main(args):
