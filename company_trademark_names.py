@@ -4,6 +4,14 @@
 # This list is sorted alphabetically. If you contribute to this list, please
 # make sure to insert it at the proper place.
 COMPANY_TRADEMARK_NAMES = [
+    "Aagon",
+    "Aarhof",
+    "Aaronia",
+    "Aavik",
+    "Abais",
+    "Abay",
+    "Abbeba",
+    "Abbelen",
     "Airbus",
     "Aldi",
     "Apple",
@@ -22,6 +30,7 @@ COMPANY_TRADEMARK_NAMES = [
     "Ford",
     "Fortuna",
     "GeForce",
+    "Google",
     "Honda",
     "Huawei",
     "Hyundai",
@@ -56,6 +65,7 @@ COMPANY_TRADEMARK_NAMES = [
     "Vodafone",
     "Wirecard",
     "Xbox",
+    "Yahoo",
     "Youtube",
     "YouTube",
 ]
