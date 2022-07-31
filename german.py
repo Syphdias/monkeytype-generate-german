@@ -155,11 +155,11 @@ def main(args):
 
     words = filter_words(words, args.verbose)
 
-    write_json_file(words, source_file, 200, "german")
-    write_json_file(words, source_file, 1_000, "german_1k")
-    write_json_file(words, source_file, 10_000, "german_10k")
-    write_json_file(words, source_file, 250_000, "german_250k")
-    write_json_file(words, source_file, len(words), "german_max")
+    write_json_file(words, ",".join(args.sources), 200, "german")
+    write_json_file(words, ",".join(args.sources), 1_000, "german_1k")
+    write_json_file(words, ",".join(args.sources), 10_000, "german_10k")
+    write_json_file(words, ",".join(args.sources), 250_000, "german_250k")
+    write_json_file(words, ",".join(args.sources), len(words), "german_max")
 
 
 if __name__ == "__main__":
