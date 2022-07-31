@@ -3,7 +3,7 @@
 #
 # This list is sorted alphabetically. If you contribute to this list, please
 # make sure to insert it at the proper place.
-COMPANY_NAMES = [
+COMPANY_TRADEMARK_NAMES = [
     "Airbus",
     "Aldi",
     "Apple",
