@@ -29,6 +29,10 @@ There is currently no filter for inappropriate words. I believe the current
 words list for German is not filtered for that as well, since it does contain
 "Arschloch" for example.
 
+It is a lot of work to go through all words and find Names or special cases in
+the raw word list. I think it would be better to implements an API to check if
+the words are German – e.g. query against the [Duden API].
+
 
 ## Potential Features
 
@@ -42,6 +46,9 @@ I currently don't know how I could integrate this into the [monkeytype] project
 besides opening a PR once in a while with an updated list.
 - I do not just the source to be stable enough for automation
 - I do not know if Wikipedia or News are preferred as base
+- I am too unhappy with the manual filter to submit a result to monkeytype (see
+  [Issues](#issues)
 
 
 [monkeytype]: https://github.com/monkeytypegame/monkeytype
+[Duden API]: https://www.duden.de/api
